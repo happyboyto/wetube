@@ -1,5 +1,5 @@
 10/12 DAY1
-1.0~
+1.0~3.3
 
 
 
@@ -89,6 +89,8 @@
 	npm i --save-dev @babel/core 명령어로 설치하면 package.json에 devDependencies에 추가.
 	dependencies는 프로젝트를 진행하기 위해 필요한 패키지. 
 	devDependencies는 개발자에게 필요한 dependencies라는 의미지만 dev말고 그냥 dependencies에 추가해도 상관없음. 
+	비유하자면 dependencies는 차가 굴러가는데 필요한 연료, devDependencies는 차의 오디오. dependencies는 프로젝트를 위해 필수적 devDependencies는 
+	개발자가 쾌적하게 개발하기 위해 필요한 것.
 	--save-dev를 추가해야 devDependencis에 기록.
 	
 	babel.config.json으로 설정파일 만들어주기.
@@ -112,6 +114,7 @@
 
 	callback함수 만들기 전에. 서버에게 어떤 port를 listening할지 얘기해 줘야함.
 	컴퓨터엔 수많은 port가 있고 port는 마치 문이나 창문 같은 존재. 몇몇 port는 인터넷에 오픈되어 있음
+	서버가 내 컴퓨터 전체를 listen하고 있을 수 없기 때문에 port를 사용.
 	강의에서는 4000번을 사용(일반적으로 높은 숫자는 비어있어서.. 꼭 이 번호일 필요는 없대)
 	app.listen(4000, handelListening);
 	const handelListening = () => console.log("server listening on port 4000");

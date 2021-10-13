@@ -1,0 +1,38 @@
+10/12 DAY1
+3.4~
+
+
+1. express recap 
+	expressjs.com/en/4x/api.html#res 사이트에서 express의 property와 method확인.
+	Router는 Routes를 정돈하는 방법.
+	request object는 file을 들고 있기도 하고 search query를 갖고 있기도 하고 username, password등.....
+	response도 text, html, files, status code 등 많은 걸 전달 가능.
+	request를 받고 그것에 응답하는 것이 backend developer가 하는 일이라고 정리 가능
+
+
+2. middlewares
+	middle software -> 중간에 있는 소프트웨어
+	무엇의 중간? -> request와 response 의 중간
+	All handler is middleware and all middleware is handler
+	이제 handler 대신 controller라고 명명.
+	app.get()은 controller에게 사실 세가지 argument를 넘겨줌. req, res 그리고 next.
+	app.get("/", middleWare, nextFunction) 이런식으로 두고 middleWare에서 next() 쓰면 다음 함수로 넘어감.\
+	middleware는 request에 응답하지 않음. 다만 request는 유지시키는 것. 응답하면 거기서 끝나고 다음 함수로 넘어가질 못하기 때문
+	
+	app.use()는 global middelware를 만들 수 있게 해줌.
+	app.use(middleWare);
+	app.get(handler);
+	순서로 둬야함. express는 JS처럼 위에서 부터 읽어 내려오기 때문에. 
+	이렇게 하면 use 함수 다음에 오는 모든 route에 적용
+	middleware를 사용하면 route에 따라서 block하는 등의 controll 가능.
+	직접 만들기도 하지만 유명한 middleware를 사용하기도 함.
+
+
+3. Morgan middleware
+	morgan : nodeJS용 request logger middleware
+	morgan 함수를 호출하면, 내가 설정한 대로 middelware를 return 해준다.
+		const morganMiddleware = morgan("dev"); -> 여기서 dev는 하나의 옵션. 다른 옵션을 넣으면 다른 결과(combined, common, short, tiny 등등)
+		app.use(morganMiddleware); 
+	지금까지 만들고 썼던 middleware들과 사용법이 같음.
+	우리가 만들었던 것과의 차이는 morgan이 좀 더 정교하다는 것.
+	morgan도 역시 req, res, next가 있음
