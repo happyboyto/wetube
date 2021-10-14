@@ -1,0 +1,118 @@
+10/14 DAY3
+4.0~
+
+
+1. What is Router?
+	라우터는 나의 컨트롤러와 URL의 관리를 쉽게 해줌. --> mini-application을 만드는 셈.
+	라우터는 URL이 뭐로 시작하느냐에 따라 나눠주는 것.
+	url을 더 낫고 독립적인 방법으로 관리하기 위해 사용함.
+	
+	필요한 페이지들?
+	/edit-user
+	/delete-user
+	/watch-video
+	/edit-video
+	/delete-video ....
+	
+	유저, 동영상의 URL을 가져와서 라우터안에 넣자!
+	/
+	/login
+	/search  --> global router(home에서 바로 갈수 있는 url들)
+
+	/users/edit
+	/users/delete --> user router
+	
+	/videos/watch
+	/videos/edit
+	/videos/delete --> video router
+	이렇게 라우터는 작업 중인 주제를 기반으로 URL을 그룹화해준다!
+
+	const globalRouter = express.Router();
+	const handleLogin = (req, res) => res.send("LOGIN PAGE");
+	globalRouter.get("/login", handleLogin)
+
+	const userRouter = express.Router();
+	const videoRouter = express.Router();
+
+	app.use("/", globalRouter);
+	app.use("/users", userRouter);
+	app.use("/videos", videoRouter);
+
+	--> 누군가 /로 시작하는 URL을 찾는다면 Express는 globalRouter 안으로 들어감.
+	그러면 현재 globalRouter는 /login을 가지고 있고 handleLogin을 실행하게 됨.
+
+
+
+2. 위의 코드를 좀 정리해보자!
+	코드를 작성할 때는 창의적인 생각으로 일단 작성하고 정리하는 것이 효율적.
+	정리하는데에는 코드를 작성했을 때 만큼의 시간을 투자해서.
+
+	1) divide controller and routers
+		각 파일은 개별로 돌아갈 수 있는 환경이 되어야함. 
+		각각 import express해줘야함.
+		routers 폴더를 만들고 그 안에 각 router.js파일을 만들어서 각각 정리
+		그 이후에 각 router를 server.js로 데려와야 해.
+		
+		그런데 각 파일은 모두 module상태고 해당 파일에 있는 모든 건 
+		다른 파일로부터 완전하게 private상태임.
+		그래서 server.js에서 import 하고 싶다면 우선 해당 파일에서
+		export해줘야함. --> export default globalRouter; 같은 식으로 변수를 export해줘야함.
+
+		그러나 여전히 충분히 분리되지 않음.
+		controller의 기능은 훨씬 다양해 질것이고 그럼 router와 controller를 섞어서 쓰고 보관하는게 별로야..
+		왜냐면 controller는 함수고 router는 그 함수를 이용하는 입장..
+		그래서 controller 폴더에 controller file을 만드는데 이걸 router file에서 사용하려면 export 해줘야함.
+		근데 export default controllerName; 으로 export하려면 각 controller 마다 file이 전부 있어야함 --> insane!
+		그래서 export default를 하는게 아니라 각 함수면 const  앞에 export를 붙여줌.
+		이렇게 하면 한 파일이 여러 변수를 export할 수 있게 됨.
+		다만 import를 할 때 기존의 방법처럼 export default로 export한 것을 받을 때는 어떤 이름으로든 받아올 수 있었음
+		왜냐면 그 파일에서 export된 변수가 뭔지 명확히 알수 있었으니깐.
+		근데 export const 방식으로 했을 때는 한 파일에서 여러 변수가 export되기 때문에 import 할 때도 명확히 변수명을 적어야함.
+		import { edit, delete} from "../controllers/userController";
+
+		이렇게 해서 server에서 router를 부르고 router는 controller를 불러다 쓰는 구조가 완성.
+
+
+4. Planning Routes
+	/ -> Home
+	/join 
+	/login
+	/search
+
+	/users/:id -> See user
+	/users/logout -> Log Out
+	/users/edit -> Edit MY profile
+	/users/delete -> Delete MY profile
+
+	/videos/:id -> See video
+	/videos/:id/edit -> Edit video
+	/videos/:id/delete -> Delete video
+	/videos/upload -> Upload video
+
+
+5. what is "/:id"?
+	id라는 단어는 중요하지 않음 ':'가 중요함!
+	parameter라고 부름.
+	핵심은 이 parameter로 하여금 url에 변수를 포함할 수 있게 해줌.
+	이게 아니었으면 각 동영상을 보는 url을 받기 위해 전부 route만들어줘야함!
+	그런데 중요한점!!!!!!
+	parameter를 받는 아이들은 그렇지 않은 애들보다 밑에 있어야해!!
+	안그러면 url주소를 parmeter 변수로 인식함!
+
+	위와 같은 제약조건이 있는 것이 불편하고 또 숫자만 받고 싶은데 문자도 받아버리면 곤란..
+	그럼 특정 조건에 맞는 것만 parmeter로 받으려면 어떻게 해야할까?
+	정규식! (regular expression) --> 문자열로부터 정보를 추출하는범(모든 프로그래밍 언어에 있음)
+	/:id(\\d+) 라고 하면 digit만 추출함.
+	이렇게 하면 숫자만 parameter로 받고, get 순서도 상관 없음.
+	:id를 안붙여도 똑같이 작동은 하는데 이름으로 붙여두고 싶음.
+	왜냐하면 req.params.id 이런식으로 부를일이 있기 때문에(controller에게 필요한 경우가 많음)
+
+
+	+몇가지 express에서 제공하는 기능들..
+	/ab?cd -> b가 optional.. /abcd, /acd 둘다 OK
+	/ab+cd -> b가 몇개여도 상관 없음.. /abcd /abbbbcd /abbbbbbbbcd 전부 OK
+	/ab*cd -> b와 c사이에 아무거나 와도 됨.. /abcd /ab123cd /abasdscd 전부 OK
+	등등.. express 사이트에서 documentation 확인해봐.
+
+
+	
