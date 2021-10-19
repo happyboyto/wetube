@@ -1,0 +1,50 @@
+10/15 DAY4
+5.0~5.10
+
+
+1. HTML을 사용하자!
+	PUG! -> templete engine
+	npm i pug 로 설치하고 server.js에 가서 pug를 view engine으로 사용할 거라고 알려줘야해.
+	app.set("view engine", "pug")
+	그러면 express는 HTML을 return 하기 위해 Pug를 사용할것이다!
+	express가 pug를 찾는 기본 directory는 ./views 
+	경로 바꾸는건 app.set("views", process.cwd()+"/src/views"); 이런식...
+
+2. PUG가 좋은점?
+	1) Pug 스크립트에 자바스크립트 코드를 넣을 수 있고 그 JS 코드는 유저가 보기 전에 평범한 글로 변환된다 --> 렌더링
+	2) 깔끔하게 HTML을 작성할수 있음.
+	3) 반복을 안할 수 있음
+		--> 모든 페이지에 footer가 들어가면 그걸 일일히 각 페이지에 만들어 주는게 아니라 footer.pug를 만들어서 각 페이지에서는 include만 해주면 됨.
+		그런데 이거 말고도 반복되는 요소가 아주 많아..
+		그래서 inheritance 개념 등장!
+		--> base.pug 파일을 하나 만들고 다른 파일에서 extend base.pug를 하면 기존 틀에서 확장 가능
+		확장하기 위해서 base.pug 파일에 block을 만들어둔다. block은 나중에 이것저것 추가가 가능한 창문같은 존재
+	
+		만약 특정부분만 제외하고 나머지는 모든 페이지에서 동일한 구조가 반복되는 경우 변하는 부분만 변수로 받을 수 있음
+		base파일에서 #{variable}로 두면 됨! 그럼 누가 변수를 주지?
+		누가 이 템플릿을 렌더링 하고 있지?? --> controller!
+		controller에서 render 할때 view 이름 뒤에 {변수들을}를 넘겨주면 됨! res.render("home.pug", {});
+
+3. PUG의 conditionals
+	user에게 어느 상황엔 보이고 어느 상황엔 안보이고 하고 싶어!
+	변수를 만들 때 다른 글과 섞어서 쓰고 싶으면 #{dsfdfs} 다른 어느것과도 섞어서 쓰지 않을 때는 h1=vvssdfsdf이렇게 
+	이때 h1=variableName이 전부 붙어있어야 해
+	조건문은  if fakeUser.loggedIn
+                    li 
+                        a(href="/login") LogOut 
+                    else if fakeUser.loggedIn 
+                    li 
+                        a(href="/login") LogIn  
+						이런식으로 달면 됨.
+
+4. PUG의 iteration
+	each video in videos
+		li=video
+	else sorry nothing found
+		이런식으로 사용 가능
+
+5. Mixin
+	partial 이긴한데 data를 받을 수 있는 partial
+	mixin video(info) 이렇게 mixin 파일을 만들고 
+	include mixins/video로 불러와서
+	+video(video)로 사용.
